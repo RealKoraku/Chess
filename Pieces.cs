@@ -1,11 +1,13 @@
-﻿class Pieces {
-    public static Pieces selectedPiece { get; set; }
-    public static string currentTile { get; set; }
+﻿class Board {
+    public static Board selectedPiece { get; set; }
+    public static int TileX { get; set; }
+    public static int TileY { get; set; }
+    public static int PlayerTurn { get; set; }
 
-    public Pieces Pawn;
-    public Pieces Rook;
-    public Pieces Bishop;
-    public Pieces Knight;
-    public Pieces Queen;
-    public Pieces King;
+    public Board Pawn;
+    public Board Rook;
+    public Board Bishop;
+    public Board Knight;
+    public Board Queen;
+    public Board King;
 }

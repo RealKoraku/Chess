@@ -25,14 +25,14 @@ namespace Chess {
         }
 
         private void PopulateBoard() {
-            A1.Content = "Rook";   A1.Foreground = Brushes.White;
+            A1.Content = "Rook"; A1.Foreground = Brushes.White;
             A2.Content = "Knight"; A2.Foreground = Brushes.White;
             A3.Content = "Bishop"; A3.Foreground = Brushes.White;
-            A4.Content = "Queen";  A4.Foreground = Brushes.White;
-            A5.Content = "King";   A5.Foreground = Brushes.White;
+            A4.Content = "Queen"; A4.Foreground = Brushes.White;
+            A5.Content = "King"; A5.Foreground = Brushes.White;
             A6.Content = "Bishop"; A6.Foreground = Brushes.White;
             A7.Content = "Knight"; A7.Foreground = Brushes.White;
-            A8.Content = "Rook";   A8.Foreground = Brushes.White;
+            A8.Content = "Rook"; A8.Foreground = Brushes.White;
 
             B1.Content = "Pawn"; B1.Foreground = Brushes.White;
             B2.Content = "Pawn"; B2.Foreground = Brushes.White;
@@ -52,24 +52,62 @@ namespace Chess {
             G7.Content = "Pawn"; G7.Foreground = Brushes.Black;
             G8.Content = "Pawn"; G8.Foreground = Brushes.Black;
 
-            H1.Content = "Rook";   H1.Foreground = Brushes.Black;
+            H1.Content = "Rook"; H1.Foreground = Brushes.Black;
             H2.Content = "Knight"; H2.Foreground = Brushes.Black;
             H3.Content = "Bishop"; H3.Foreground = Brushes.Black;
-            H4.Content = "Queen";  H4.Foreground = Brushes.Black;
-            H5.Content = "King";   H5.Foreground = Brushes.Black;
+            H4.Content = "Queen"; H4.Foreground = Brushes.Black;
+            H5.Content = "King"; H5.Foreground = Brushes.Black;
             H6.Content = "Bishop"; H6.Foreground = Brushes.Black;
             H7.Content = "Knight"; H7.Foreground = Brushes.Black;
-            H8.Content = "Rook";   H8.Foreground = Brushes.Black;
-
+            H8.Content = "Rook"; H8.Foreground = Brushes.Black;
         }
 
         private void Tile_Click(object sender, RoutedEventArgs e) {
 
-            string selection = ((System.Windows.FrameworkElement)e.Source).Name;
-            if (Pieces.selectedPiece == null) {
-                Pieces.currentTile = selection;
-                }
+            var selection = (System.Windows.FrameworkElement)e.Source;
+            string selectionName = selection.Name;
+            Button? tile = e.Source as Button;
+            Brush pieceColor = tile.Foreground;
 
+            char[] xPos = { 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
+
+            for (int i = 0; i < xPos.Length; i++) {
+                if (selectionName[0] == xPos[i]) {
+                    Board.TileX = i;
+                }
+            }
+
+            char yChar = selectionName[1];
+            string toParse = "";
+            toParse += yChar;
+
+            bool parser = int.TryParse(toParse, out int yTile);
+            Board.TileY = yTile;
+
+            if (Board.selectedPiece == null) {
+                bool occupied = TileIsOccupied(tile);
+                if (occupied) {
+                    int owner = CheckPiecePlayer(tile);
+                }
+            }
+        }
+
+        private int CheckPiecePlayer(Button tile) {
+            Brush pieceColor = tile.Foreground;
+
+            if (pieceColor == Brushes.Black) {
+                return 1;
+            } else {
+                return 2;
+            }
+        }
+
+        private bool TileIsOccupied(Button tile) {
+            if (string.IsNullOrEmpty((string)tile.Content)) {
+                return false;
+            } else {
+                return true;
+            }
         }
     }
 }
