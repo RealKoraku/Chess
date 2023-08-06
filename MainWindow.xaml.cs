@@ -21,6 +21,7 @@ namespace Chess {
     public partial class MainWindow : Window {
         public MainWindow() {
             InitializeComponent();
+            Board.PlayerTurn = 1;
             PopulateBoard();
         }
 
@@ -64,31 +65,29 @@ namespace Chess {
 
         private void Tile_Click(object sender, RoutedEventArgs e) {
 
-            var selection = (System.Windows.FrameworkElement)e.Source;
-            string selectionName = selection.Name;
+            string selectionName = (string)((System.Windows.FrameworkElement)e.Source).Name;
             Button? tile = e.Source as Button;
             Brush pieceColor = tile.Foreground;
 
-            char[] xPos = { 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
-
-            for (int i = 0; i < xPos.Length; i++) {
-                if (selectionName[0] == xPos[i]) {
-                    Board.TileX = i;
-                }
-            }
-
-            char yChar = selectionName[1];
-            string toParse = "";
-            toParse += yChar;
-
-            bool parser = int.TryParse(toParse, out int yTile);
-            Board.TileY = yTile;
+            BoardToXY(selectionName);
 
             if (Board.selectedPiece == null) {
                 bool occupied = TileIsOccupied(tile);
                 if (occupied) {
                     int owner = CheckPiecePlayer(tile);
+                    if (owner == Board.PlayerTurn) {
+                        Board.selectedPiece = new Board();
+
+                        Board.selectedPiece.type = (string)tile.Content;
+                        Board.selectedPiece.color = pieceColor;
+                        Board.selectedPiece.MoveFrom = new int[] { Board.TileX, Board.TileY };
+                        Board.selectedPiece.BoardMoveFrom = tile;
+                    }
                 }
+            } else {
+                Board.selectedPiece.MoveTo = new int[] { Board.TileX, Board.TileY };
+                Board.selectedPiece.BoardMoveTo = tile;
+                MovePiece(Board.selectedPiece);
             }
         }
 
@@ -107,6 +106,54 @@ namespace Chess {
                 return false;
             } else {
                 return true;
+            }
+        }
+
+        static void MovePiece(Board piece) {
+            Board.selectedPiece.BoardMoveFrom.Content = "";
+            Board.selectedPiece.BoardMoveTo.Content = piece.type;
+            Board.selectedPiece.BoardMoveTo.Foreground = Board.selectedPiece.color;
+
+            Board.selectedPiece = null;
+            SwitchPlayer();
+        }
+
+        static void BoardToXY(string boardTile) {
+
+            char[] xPos = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H' };
+
+            for (int i = 0; i < xPos.Length; i++) {
+                if (boardTile[0] == xPos[i]) {
+                    Board.TileX = i;
+                }
+            }
+
+            char yChar = boardTile[1];
+            string toParse = "";
+            toParse += yChar;
+
+            bool parser = int.TryParse(toParse, out int yTile);
+            Board.TileY = yTile - 1;
+        }
+
+        static void XYToBoard(int[] coord) {
+            string board = "";
+            char[] xPos = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H' };
+
+            for (int i = 0; i < xPos.Length; i++) {
+                if (coord[0] == i) {
+                    board += xPos[i];
+                }
+            }
+            board += coord[1];
+
+        }
+
+        static void SwitchPlayer() {
+            if (Board.PlayerTurn == 1) {
+                Board.PlayerTurn = 2;
+            } else {
+                Board.PlayerTurn = 1;
             }
         }
     }
